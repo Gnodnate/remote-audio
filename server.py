@@ -12,50 +12,39 @@ msgSocket.bind(('', 18964))
 
 isListenerOnLine = False
 
-class msgReceiver(threading.Thread):
+class listennerThread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.thread_stop = False
     def run(self):
         while not self.thread_stop:
-            global listenerAddr
+            global listenerConn
+            listenerSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            listenerSocket.bind('', 18964)
+            listenerSocket.listen(1)
+            listenerConn, addr = listenerSocket.accept()
             try:
-                msg, address = msgSocket.recvfrom(1024)
+                msg = msgSocket.recv(1024)
             except socket.timeout:
                 continue
-            print msg, address
-            listenerAddr = address
+            print msg, listenerConn
             if msg == 'start transfer':
                 isListenerOnLine = True
-                msgSocket.sendto(msg, listenerAddr)
+                msgSocket.send(msg)
             if msg == 'quit transfer':
                 isListenerOnLine = False
 
     def stop(self):
         self.thread_stop = True
 
-msgThread = msgReceiver()
-msgThread.setDaemon(True)
-msgThread.start()
+lT = listennerThread()
+lT.setDaemon(True)
+lT.start()
 
 SPORT = 18965
-dataSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-dataSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-dataSocket.bind(('', SPORT))
 CHUNK = 1024
 CHANNELS = 1
 
-#print 'wait speaker at', SPORT
-#while True:
-#    try:
-#        data, addr = dataSocket.recvfrom(CHUNK*CHANNELS*2)
-#    except socket.timeout:
-#        continue
-#    print "Get speaker",addr
-#    if isListenerOnLine:
-#        dataSocket.sendto(data, listenerAddr)
-#    else:
-#        time.sleep(1)
 speakerSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 speakerSocket.bind(('', SPORT))
 speakerSocket.listen(1)
@@ -64,9 +53,9 @@ print 'Connected by', addr
 while 1:
     data = conn.recv(CHUNK*CHANNELS*2)
     if not data: break
+    listenerConn.sendall(data)
 conn.close()
 
-msgThread.stop()
-msgSocket.close()
-dataSocket.close()
+lt.stop()
+speakerSocket.close()
     

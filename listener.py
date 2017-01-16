@@ -6,14 +6,14 @@ import sys
 import pyaudio
 
 serverAddr = ('162.217.249.194', 18964)
-#serverAddr = ('45.62.127.222', 18964)
-cliSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+cliSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 cliSocket.settimeout(5)
+cliSocket.connect(serverAddr)
 tryCount = 0
 while 1:
-    cliSocket.sendto('start transfer', serverAddr)
+    cliSocket.send('start transfer')
     try:
-        msg, addr = cliSocket.recvfrom(2048)
+        msg, addr = cliSocket.recv(512)
         print msg
         if msg == 'start transfer':
             break
@@ -27,9 +27,9 @@ while 1:
 
 if tryCount >= 5:
     print "Can't connect to server:",serverAddr
-#    exit()
+    exit()
 
-# 开启声音
+
 CHUNK = 1024
 CHANNELS = 1
 RATE = 44100
@@ -42,7 +42,7 @@ stream = pa.open(format=FORMAT,
 tryCount = 0
 while 1:
     try:
-        data, addr = cliSocket.recvfrom(CHUNK*CHANNELS*2)
+        data, addr = cliSocket.recv(CHUNK*CHANNELS*2)
     except socket.timeout:
         if tryCount > 5:
             print "No one is there"
@@ -52,7 +52,7 @@ while 1:
             continue
     stream.write(data)
 
-cliSocket.sendto('quit transfer', serverAddr)
+cliSocket.send('quit transfer')
 cliSocket.close()
 stream.stop_stream()
 stream.close()
