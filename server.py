@@ -7,6 +7,7 @@ import time
 import traceback
 
 frames = []
+isThereListener = False
 class listennerThread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
@@ -25,21 +26,17 @@ class listennerThread(threading.Thread):
             except socket.timeout:
                 continue
             if msg == 'start transfer':
+                isThereListener = True
                 listenerConn.send(msg)
                 count = 0
                 while 1:
                     if len(frames) > 0:
                         try:
-                            listenerConn.sendAll(frames.pop[0])
-                        except:
-                            if count < 10:
-                                count += 1
-                                time.sleep(0.5)
-                                continue;
-                            else:
-                                break
-
-
+                            listenerConn.sendAll(frames.pop(0))
+                        except socket.error:
+                            isThereListener = False
+                            del frames[:]
+                            break
 
     def stop(self):
         self.thread_stop = True
@@ -63,7 +60,7 @@ while 1:
     while 1:
         try:
             data = conn.recv(CHUNK*CHANNELS*2)
-            if data:
+            if data and isThereListener:
                 frames.append(data)
         except:
             if count < 10:
