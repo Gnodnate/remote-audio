@@ -4,8 +4,11 @@ import socket
 import threading
 import sys
 import pyaudio
+import time
 
-serverAddr = ('162.217.249.194', 18964)
+#serverAddr = ('162.217.249.194', 18964)
+serverAddr = ('192.168.8.114', 18964)
+
 cliSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 cliSocket.connect(serverAddr)
 tryCount = 0
@@ -26,8 +29,7 @@ while 1:
 
 if tryCount >= 5:
     print "Can't connect to server:",serverAddr
-    exit()
-
+    sys.exit()
 
 CHUNK = 1024
 CHANNELS = 1

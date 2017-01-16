@@ -34,7 +34,7 @@ class listennerThread(threading.Thread):
                         except:
                             if count < 10:
                                 count += 1
-                                sleep(0.5)
+                                time.sleep(0.5)
                                 continue;
                             else:
                                 break
@@ -68,7 +68,7 @@ while 1:
         except:
             if count < 10:
                 count += 1
-                sleep(0.5)
+                time.sleep(0.5)
                 continue;
             else:
                 break
