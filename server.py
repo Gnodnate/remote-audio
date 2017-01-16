@@ -58,7 +58,7 @@ while True:
         time.sleep(1)
 
 speakerSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-speakerSocket.bind('', SPORT)
+speakerSocket.bind(('', SPORT))
 speakerSocket.listen(1)
 conn, addr = speakerSocket.accept()
 print 'Connected by', addr
