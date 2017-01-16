@@ -20,23 +20,28 @@ class listennerThread(threading.Thread):
             listenerSocket.listen(1)
             listenerConn, addr = listenerSocket.accept()
             listenerConn.settimeout(5)
-            print 'get listener at', addr
             try:
                 msg = listenerConn.recv(1024)
             except socket.timeout:
                 continue
             if msg == 'start transfer':
+                global isThereListener
                 isThereListener = True
+                print 'get listener at', addr, isThereListener
+
                 listenerConn.send(msg)
                 count = 0
                 while 1:
                     if len(frames) > 0:
                         try:
-                            listenerConn.sendAll(frames.pop(0))
-                        except socket.error:
+                            listenerConn.sendall(frames.pop(0))
+                        except IOError:
                             isThereListener = False
+                            listenerConn.close()
                             del frames[:]
+                            
                             break
+                                
 
     def stop(self):
         self.thread_stop = True
@@ -55,20 +60,17 @@ while 1:
     print 'waiting for speaker'
     speakerSocket.listen(1)
     conn, addr = speakerSocket.accept()
-    print 'get speaker at', addr
+    print 'get speaker at', addr, isThereListener
     count = 0;
     while 1:
         try:
             data = conn.recv(CHUNK*CHANNELS*2)
-            if data and isThereListener:
+            if not data: break
+            if isThereListener:
                 frames.append(data)
-        except:
-            if count < 10:
-                count += 1
-                time.sleep(0.5)
-                continue;
-            else:
-                break
+        except IOError:
+            del frames[:]
+            break
     conn.close()
 
 lt.stop()
