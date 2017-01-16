@@ -18,12 +18,11 @@ class listennerThread(threading.Thread):
             print 'waiting for listener'
             listenerSocket.listen(1)
             listenerConn, addr = listenerSocket.accept()
-            print 'connect by', addr
+            print 'get listener at', addr
             try:
                 msg = listenerConn.recv(1024)
             except socket.timeout:
                 continue
-            print 'send', msg, 'to', addr
             if msg == 'start transfer':
                 listenerConn.send(msg)
                 while 1:
@@ -52,11 +51,13 @@ while 1:
     print 'waiting for speaker'
     speakerSocket.listen(1)
     conn, addr = speakerSocket.accept()
-    print 'Connected by', addr
+    print 'get speaker at', addr
     while 1:
-        data = conn.recv(CHUNK*CHANNELS*2)
-        if not data: break
-        frames.append(data)
+        try:
+            data = conn.recv(CHUNK*CHANNELS*2)
+            frames.append(data)
+        except:
+            break;
     conn.close()
 
 lt.stop()
