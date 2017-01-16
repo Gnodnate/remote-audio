@@ -18,6 +18,7 @@ class listennerThread(threading.Thread):
             print 'waiting for listener'
             listenerSocket.listen(1)
             listenerConn, addr = listenerSocket.accept()
+            listenerConn.settimeout(5)
             print 'get listener at', addr
             try:
                 msg = listenerConn.recv(1024)
@@ -25,12 +26,18 @@ class listennerThread(threading.Thread):
                 continue
             if msg == 'start transfer':
                 listenerConn.send(msg)
+                count = 0
                 while 1:
                     if len(frames) > 0:
                         try:
                             listenerConn.sendAll(frames.pop[0])
                         except:
-                            break
+                            if count < 10:
+                                count += 1
+                                sleep(0.5)
+                                continue;
+                            else:
+                                break
 
 
 
