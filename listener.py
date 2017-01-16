@@ -44,7 +44,6 @@ tryCount = 0
 while 1:
     try:
         data = cliSocket.recv(CHUNK*CHANNELS*2)
-        print 'get len',len(data)
         if not data:
             break
     except socket.timeout:
