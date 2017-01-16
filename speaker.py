@@ -15,14 +15,10 @@ class udpStream(threading.Thread):
         server_address = ('162.217.249.194', 18965)
         tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         tcp.connect(server_address)
-        udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        print "SNDBUF",udp.getsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF)
         while not self.thread_stop:
             if len(frames) > 0:
-                #udp.sendto(frames.pop(0), socket.MSG_WAITALL, server_address)
                 tcp.sendall(frames.pop(0))
                 
-        udp.close()
         tcp.close()
         
     def stop(self):

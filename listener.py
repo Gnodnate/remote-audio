@@ -12,7 +12,7 @@ tryCount = 0
 while 1:
     cliSocket.send('start transfer')
     try:
-        msg, addr = cliSocket.recv(512)
+        msg = cliSocket.recv(512)
         print msg
         if msg == 'start transfer':
             break
@@ -41,7 +41,8 @@ stream = pa.open(format=FORMAT,
 tryCount = 0
 while 1:
     try:
-        data, addr = cliSocket.recv(CHUNK*CHANNELS*2)
+        data = cliSocket.recv(CHUNK*CHANNELS*2)
+        print 'get len',len(data)
     except socket.timeout:
         if tryCount > 5:
             print "No one is there"

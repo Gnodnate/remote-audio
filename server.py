@@ -6,7 +6,6 @@ from sys import exit
 import time
 import traceback
 
-isListenerOnLine = False
 frames = []
 class listennerThread(threading.Thread):
     def __init__(self):
@@ -16,6 +15,7 @@ class listennerThread(threading.Thread):
         listenerSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         listenerSocket.bind(('', 18964))
         while not self.thread_stop:
+            print 'waiting for listener'
             listenerSocket.listen(1)
             listenerConn, addr = listenerSocket.accept()
             print 'connect by', addr
@@ -23,7 +23,7 @@ class listennerThread(threading.Thread):
                 msg = listenerConn.recv(1024)
             except socket.timeout:
                 continue
-            print msg, listenerConn
+            print 'send', msg, 'to', addr
             if msg == 'start transfer':
                 listenerConn.send(msg)
                 while 1:
@@ -49,6 +49,7 @@ CHANNELS = 1
 speakerSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 speakerSocket.bind(('', SPORT))
 while 1:
+    print 'waiting for speaker'
     speakerSocket.listen(1)
     conn, addr = speakerSocket.accept()
     print 'Connected by', addr
