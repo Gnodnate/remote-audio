@@ -41,11 +41,13 @@ msgThread.start()
 dataSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 dataSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 dataSocket.bind(('', 18965))
+CHUNK = 1024
+CHANNELS = 1
 
 print 'wait speaker at 18965'
 while True:
     try:
-        data, addr = dataSocket.recvfrom(65536)
+        data, addr = dataSocket.recvfrom(CHUNK*CHANNELS*2)
     except socket.timeout:
         continue
     print "Get speaker",addr

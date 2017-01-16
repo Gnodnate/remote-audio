@@ -5,33 +5,49 @@ import numpy as np
 from datetime import datetime
 import socket
 import pyaudio
+import threading
 
-CHUNK = 256
-WIDTH = 2
+frames= []
+
+class udpStream(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+        self.thread_stop = False
+    def run(self):
+        server_address = ('162.217.249.194', 18965)
+        udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        while not self.thread_stop:
+            if len(frames) > 0:
+                udp.sendto(frames.pop(0), server_address)
+                
+        udp.close()
+        
+    def stop(self):
+        self.thread_stop = True
+
+udpTread = udpStream()
+udpTread.setDaemon(True)
+udpTread.start()
+
+CHUNK = 1024
 CHANNELS = 1
 RATE = 44100
+FORMAT = pyaudio.paInt16
 
-# 开启声音输入
+
 p = pyaudio.PyAudio()
-
-stream = p.open(format=p.get_format_from_width(WIDTH),
+stream = p.open(format=FORMAT,
                 channels=CHANNELS,
                 rate=RATE,
                 input=True,
-                output=True,
                 frames_per_buffer=CHUNK)
 save_count = 0 
 save_buffer = [] 
 large_sample_count = 0
 
-# UDP socket
-speakerSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-server_address = ('162.217.249.194', 18965)
-#while True: 
-    # 读入NUM_SAMPLES个取样
-data = stream.read(CHUNK)
-stream.write(data, CHUNK)
-print 'send data',speakerSocket.sendto(data, server_address)
+while True:
+    data = stream.read(CHUNK)
+    frames.append(data)
     
 stream.stop_stream()
 stream.close()

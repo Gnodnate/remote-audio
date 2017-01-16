@@ -30,16 +30,19 @@ if tryCount >= 5:
 #    exit()
 
 # 开启声音
-SAMPLING_RATE = 8000    # 取样频率
+CHUNK = 1024
+CHANNELS = 1
+RATE = 44100
+FORMAT = pyaudio.paInt16
 pa = PyAudio() 
-stream = pa.open(format=paInt16,
-                      channels=1,
-                      rate=SAMPLING_RATE,
+stream = pa.open(format=FORMAT,
+                      channels=CHANNELS,
+                      rate=RATE,
                       output=True)
 tryCount = 0
 while 1:
     try:
-        data, addr = cliSocket.recvfrom(65536)
+        data, addr = cliSocket.recvfrom(CHUNK*CHANNELS*2)
     except socket.timeout:
         if tryCount > 5:
             print "No one is there"
