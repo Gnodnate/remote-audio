@@ -12,8 +12,7 @@ class udpStream(threading.Thread):
         threading.Thread.__init__(self)
         self.thread_stop = False
     def run(self):
-#        server_address = ('162.217.249.194', 18965)
-        server_address = ('192.168.8.114', 18965)
+        server_address = ('162.217.249.194', 18965)
         tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         tcp.connect(server_address)
         while not self.thread_stop:

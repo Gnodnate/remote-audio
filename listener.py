@@ -6,8 +6,7 @@ import sys
 import pyaudio
 import time
 
-#serverAddr = ('162.217.249.194', 18964)
-serverAddr = ('192.168.8.114', 18964)
+serverAddr = ('162.217.249.194', 18964)
 
 cliSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 cliSocket.connect(serverAddr)
