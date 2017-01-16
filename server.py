@@ -48,7 +48,7 @@ while True:
         data, addr = dataSocket.recvfrom(65536)
     except socket.timeout:
         continue
-    print "Get speaker"
+    print "Get speaker",addr
     if isListenerOnLine:
         dataSocket.sendto(data, listenerAddr)
     else:
