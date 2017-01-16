@@ -12,7 +12,7 @@ class udpStream(threading.Thread):
         threading.Thread.__init__(self)
         self.thread_stop = False
     def run(self):
-        server_address = ('162.217.249.194', 18965)
+        server_address = ('162.217.*.*', 18965)
         tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         tcp.connect(server_address)
         while not self.thread_stop:
@@ -43,9 +43,6 @@ stream = p.open(format=FORMAT,
                 rate=RATE,
                 input=True,
                 frames_per_buffer=CHUNK)
-save_count = 0 
-save_buffer = [] 
-large_sample_count = 0
 
 while True:
     data = stream.read(CHUNK)
