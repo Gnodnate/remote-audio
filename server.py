@@ -6,33 +6,33 @@ from sys import exit
 import time
 import traceback
 
-msgSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-msgSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-msgSocket.bind(('', 18964))
-
 isListenerOnLine = False
-
+frames = []
 class listennerThread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.thread_stop = False
     def run(self):
+        listenerSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        listenerSocket.bind(('', 18964))
         while not self.thread_stop:
-            global listenerConn
-            listenerSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            listenerSocket.bind('', 18964)
             listenerSocket.listen(1)
             listenerConn, addr = listenerSocket.accept()
             try:
-                msg = msgSocket.recv(1024)
+                msg = listenerSocket.recv(1024)
             except socket.timeout:
                 continue
             print msg, listenerConn
             if msg == 'start transfer':
-                isListenerOnLine = True
-                msgSocket.send(msg)
-            if msg == 'quit transfer':
-                isListenerOnLine = False
+                listenerConn.send(msg)
+                while 1:
+                    if len(frames) > 0:
+                        try:
+                            listenerConn.sendAll(frames.pop[0])
+                        except:
+                            break
+
+
 
     def stop(self):
         self.thread_stop = True
@@ -47,14 +47,15 @@ CHANNELS = 1
 
 speakerSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 speakerSocket.bind(('', SPORT))
-speakerSocket.listen(1)
-conn, addr = speakerSocket.accept()
-print 'Connected by', addr
 while 1:
-    data = conn.recv(CHUNK*CHANNELS*2)
-    if not data: break
-    listenerConn.sendall(data)
-conn.close()
+    speakerSocket.listen(1)
+    conn, addr = speakerSocket.accept()
+    print 'Connected by', addr
+    while 1:
+        data = conn.recv(CHUNK*CHANNELS*2)
+        if not data: break
+        frames.append(data)
+    conn.close()
 
 lt.stop()
 speakerSocket.close()
