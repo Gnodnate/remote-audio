@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
-from datetime import datetime
 import socket
 import pyaudio
 import threading
@@ -14,12 +13,17 @@ class udpStream(threading.Thread):
         self.thread_stop = False
     def run(self):
         server_address = ('162.217.249.194', 18965)
+        tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        tcp.connect(server_address)
         udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        print "SNDBUF",udp.getsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF)
         while not self.thread_stop:
             if len(frames) > 0:
-                udp.sendto(frames.pop(0), server_address)
+                #udp.sendto(frames.pop(0), socket.MSG_WAITALL, server_address)
+                tcp.sendall(frames.pop(0))
                 
         udp.close()
+        tcp.close()
         
     def stop(self):
         self.thread_stop = True

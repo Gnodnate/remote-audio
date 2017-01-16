@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 import socket
 import threading
-from pyaudio  import PyAudio, paInt16
 import sys
+import pyaudio
 
 serverAddr = ('162.217.249.194', 18964)
 #serverAddr = ('45.62.127.222', 18964)
@@ -34,7 +34,7 @@ CHUNK = 1024
 CHANNELS = 1
 RATE = 44100
 FORMAT = pyaudio.paInt16
-pa = PyAudio() 
+pa = pyaudio.PyAudio() 
 stream = pa.open(format=FORMAT,
                       channels=CHANNELS,
                       rate=RATE,
