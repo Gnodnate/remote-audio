@@ -43,6 +43,8 @@ while 1:
     try:
         data = cliSocket.recv(CHUNK*CHANNELS*2)
         print 'get len',len(data)
+        if not data:
+            break
     except socket.timeout:
         if tryCount > 5:
             print "No one is there"

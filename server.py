@@ -52,12 +52,19 @@ while 1:
     speakerSocket.listen(1)
     conn, addr = speakerSocket.accept()
     print 'get speaker at', addr
+    count = 0;
     while 1:
         try:
             data = conn.recv(CHUNK*CHANNELS*2)
-            frames.append(data)
+            if data:
+                frames.append(data)
         except:
-            break;
+            if count < 10:
+                count += 1
+                sleep(0.5)
+                continue;
+            else:
+                break
     conn.close()
 
 lt.stop()
