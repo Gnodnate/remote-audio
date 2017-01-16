@@ -45,18 +45,17 @@ dataSocket.bind(('', SPORT))
 CHUNK = 1024
 CHANNELS = 1
 
-print 'wait speaker at', SPORT
-while True:
-    try:
-        data, addr = dataSocket.recvfrom(CHUNK*CHANNELS*2)
-    except socket.timeout:
-        continue
-    print "Get speaker",addr
-    if isListenerOnLine:
-        dataSocket.sendto(data, listenerAddr)
-    else:
-        time.sleep(1)
-
+#print 'wait speaker at', SPORT
+#while True:
+#    try:
+#        data, addr = dataSocket.recvfrom(CHUNK*CHANNELS*2)
+#    except socket.timeout:
+#        continue
+#    print "Get speaker",addr
+#    if isListenerOnLine:
+#        dataSocket.sendto(data, listenerAddr)
+#    else:
+#        time.sleep(1)
 speakerSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 speakerSocket.bind(('', SPORT))
 speakerSocket.listen(1)
