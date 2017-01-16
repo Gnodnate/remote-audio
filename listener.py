@@ -7,7 +7,6 @@ import pyaudio
 
 serverAddr = ('162.217.249.194', 18964)
 cliSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-cliSocket.settimeout(5)
 cliSocket.connect(serverAddr)
 tryCount = 0
 while 1:

@@ -18,8 +18,9 @@ class listennerThread(threading.Thread):
         while not self.thread_stop:
             listenerSocket.listen(1)
             listenerConn, addr = listenerSocket.accept()
+            print 'connect by', addr
             try:
-                msg = listenerSocket.recv(1024)
+                msg = listenerConn.recv(1024)
             except socket.timeout:
                 continue
             print msg, listenerConn
